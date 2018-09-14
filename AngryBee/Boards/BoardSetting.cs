@@ -13,7 +13,7 @@ namespace AngryBee.Boards
 
         private BoardSetting() { }
 
-        public static (BoardSetting setting, Player me, Player enemy) Generate(byte height = 12, byte width = 12)
+        public static (BoardSetting setting, Player me, Player enemy) Generate(byte height = 16, byte width = 16)
         {
             if ((width & 0b1) == 1)
                 throw new ArgumentException("width must be an odd number.", nameof(width));

@@ -34,11 +34,14 @@ namespace AngryBee.AI
             for (int i = 0; i < WayEnumerator.Length; ++i)
             {
                 Player newMe = Me;
+
                 if (num == 1)
                 {
                     newMe.Agent1 += WayEnumerator[i];
 
-                    if (newMe.Agent1.X >= MeBoard.Width || newMe.Agent1.Y >= MeBoard.Height || newMe.Agent1 == newMe.Agent2 || newMe.Agent1 == Enemy.Agent1 || newMe.Agent1 == Enemy.Agent2) continue;
+                    var movable = Checker.MovableCheck(MeBoard, EnemyBoard, newMe, Enemy);
+
+                    if (!movable.IsMovable) continue;
                     if (EnemyBoard[newMe.Agent1])
                     {
                         var newEnBoard = EnemyBoard;
@@ -63,7 +66,9 @@ namespace AngryBee.AI
                 {
                     newMe.Agent2 += WayEnumerator[i];
 
-                    if (newMe.Agent2.X >= MeBoard.Width || newMe.Agent2.Y >= MeBoard.Height || newMe.Agent2 == newMe.Agent1 || newMe.Agent2 == Enemy.Agent1 || newMe.Agent2 == Enemy.Agent2) continue;
+                    var movable = Checker.MovableCheck(MeBoard, EnemyBoard, newMe, Enemy);
+
+                    if (!movable.IsMovable) continue;
                     if (EnemyBoard[newMe.Agent2])
                     {
                         var newEnBoard = EnemyBoard;
@@ -84,6 +89,7 @@ namespace AngryBee.AI
                         else BestWay = Better(Search(num, deepness - 1, WayEnumerator, newMeBoard, EnemyBoard, newMe, Enemy, ScoreBoard, first), BestWay);
                     }
                 }
+
             }
             return BestWay;
 

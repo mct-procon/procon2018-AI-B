@@ -6,12 +6,13 @@ namespace AngryBee
     {
         static void Main(string[] args)
         {
-            byte width = 12;
-            byte height = 12;
+            byte width = 16;
+            byte height = 16;
 
             var ai = new AI.AI();
             var ai_kousi = new AI.AI_kousi();
-            var ai_SF = new AI.AI_SingleFor();
+            var ai_SingleFor = new AI.AI_SingleFor();
+            var ai_OutSide = new AI.AI_outside(); 
             var game = Boards.BoardSetting.Generate(height, width);
 
             var meBoard = new Boards.ColoredBoardSmallBigger(height, width);
@@ -40,11 +41,12 @@ namespace AngryBee
                 var before_me_Agent2 = game.me.Agent2;
                 var before_enemy_Agent1 = game.enemy.Agent1;
                 var before_enemy_Agent2 = game.enemy.Agent2;
-
+                
                 var meBoard_spare = meBoard;
                 var enBoard_spare = enemyBoard;
-                var res_me = ai_SF.Begin(2, game.setting, meBoard, enemyBoard, game.me, game.enemy);
-                var res_en = ai_SF.Begin(3, game.setting, enBoard_spare, meBoard_spare, game.enemy, game.me);
+
+                var res_me = ai_kousi.Begin(1, game.setting, meBoard, enemyBoard, game.me, game.enemy);
+                var res_en = ai_OutSide.Begin(3, game.setting, enBoard_spare, meBoard_spare, game.enemy, game.me);
                 game.me = res_me;
                 game.enemy = res_en;
 

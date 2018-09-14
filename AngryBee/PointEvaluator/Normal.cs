@@ -39,7 +39,7 @@ namespace AngryBee.PointEvaluator
         {
             unchecked
             {
-                Boards.Point* myStack = stackalloc Boards.Point[12 * 12];
+                Boards.Point* myStack = stackalloc Boards.Point[16 * 16];
 
                 Point point;
                 uint x, y, searchTo = 0, myStackSize = 0;
