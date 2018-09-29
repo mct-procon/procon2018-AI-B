@@ -88,7 +88,8 @@ namespace AngryBee.AI
                         result = cache;
                         if (deepness == reDeep)
                         {
-                            reMe = newMe;
+                            reMe.Agent1 = Me.Agent1 + WayEnumerator[i];
+                            reMe.Agent2 = Me.Agent2 + WayEnumerator[m];
                         }
                     }
 

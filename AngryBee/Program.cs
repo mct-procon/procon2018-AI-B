@@ -45,8 +45,8 @@ namespace AngryBee
                 var meBoard_spare = meBoard;
                 var enBoard_spare = enemyBoard;
 
-                var res_me = ai_kousi.Begin(1, game.setting, meBoard, enemyBoard, game.me, game.enemy);
-                var res_en = ai_OutSide.Begin(3, game.setting, enBoard_spare, meBoard_spare, game.enemy, game.me);
+                var res_me = ai_kousi.Begin(2, game.setting, meBoard, enemyBoard, game.me, game.enemy);
+                var res_en = ai.Begin(2, game.setting, enBoard_spare, meBoard_spare, game.enemy, game.me);
                 game.me = res_me;
                 game.enemy = res_en;
 

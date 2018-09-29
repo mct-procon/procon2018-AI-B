@@ -38,7 +38,7 @@ namespace AngryBee.AI
             for (int i = 0; i < WayEnumerator.Length; ++i)
                 for (int m = 0; m < WayEnumerator.Length; ++m)
                 {
-
+                    
                     Player newMe = Me;
                     newMe.Agent1 += WayEnumerator[i];
                     newMe.Agent2 += WayEnumerator[m];
@@ -85,7 +85,8 @@ namespace AngryBee.AI
                         result = cache;
                         if (deepness == reDeep)
                         {
-                            reMe = newMe;
+                            reMe.Agent1 = Me.Agent1 + WayEnumerator[i];
+                            reMe.Agent2 = Me.Agent2 + WayEnumerator[m];
                         }
                     }
 

@@ -18,7 +18,7 @@ namespace AngryBee.AI
             Player reMe = Me;
             
             reMe.Agent1 += Search(1, deepness, WayEnumerator, MeBoard, EnemyBoard, Me, Enemy, setting.ScoreBoard, (100, 100)).Item5;
-            reMe.Agent2 += Search(2, deepness, WayEnumerator, MeBoard, EnemyBoard, Me, Enemy, setting.ScoreBoard, (100, 100)).Item5;
+            reMe.Agent2 += Search(2, deepness, WayEnumerator, MeBoard, EnemyBoard, reMe, Enemy, setting.ScoreBoard, (100, 100)).Item5;
             
             return reMe;
         }
