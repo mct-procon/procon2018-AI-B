@@ -11,7 +11,7 @@ namespace AngryBee.AI
         PointEvaluator.Normal PointEvaluator = new PointEvaluator.Normal();
 
         public int ends = 0;
-        public System.Diagnostics.Stopwatch SearchTime;
+        private System.Diagnostics.Stopwatch SearchTime;
 
         private class DP
         {

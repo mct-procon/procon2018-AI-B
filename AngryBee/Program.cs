@@ -15,6 +15,8 @@ namespace AngryBee
             var ai_outside = new AI.AI_outside();
             var ai_hanpuku = new AI.AI_hanpuku();
             var ai_hanpuku_a = new AI.AI_hanpuku_a();
+            var ai_hanpuku_sf = new AI.AI_hanpuku_SF();
+            var ai_hanpuku_sf_a = new AI.AI_hanpuku_SF_a();
             var game = Boards.BoardSetting.Generate(height, width);
 
             var meBoard = new Boards.ColoredBoardSmallBigger(height, width);
@@ -48,8 +50,8 @@ namespace AngryBee
                 var enBoard_spare = enemyBoard;
 
                 int ends_1 = 0, ends_2 = 0;
-                var res_me = ai_hanpuku.Begin(1000, game.setting, meBoard, enemyBoard, game.me, game.enemy);
-                ends_1 = ai_hanpuku.ends;
+                var res_me = ai_hanpuku_sf.Begin(1000, game.setting, meBoard, enemyBoard, game.me, game.enemy);
+                ends_1 = ai_hanpuku_sf.ends;
                 ai_hanpuku.ends = 0;
                 var res_en = ai_hanpuku.Begin(1000, game.setting, enBoard_spare, meBoard_spare, game.enemy, game.me);
                 ends_2 = ai_hanpuku.ends;
