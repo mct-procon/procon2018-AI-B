@@ -23,7 +23,7 @@ namespace AngryBee.Boards
             result.Height = height;
             result.ScoreBoard = new sbyte[height, width];
 
-            Random rand = new Random(13);
+            Random rand = new Random(5738);
 
             int widthDiv2 = width / 2;
 

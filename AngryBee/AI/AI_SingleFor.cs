@@ -9,7 +9,8 @@ namespace AngryBee.AI
     {
         Rule.MovableChecker Checker = new Rule.MovableChecker();
         PointEvaluator.Normal PointEvaluator = new PointEvaluator.Normal();
-        
+
+        public int ends = 0;
 
         public Player Begin(int deepness, BoardSetting setting, ColoredBoardSmallBigger MeBoard, ColoredBoardSmallBigger EnemyBoard, in Player Me, in Player Enemy)
         {
@@ -27,6 +28,7 @@ namespace AngryBee.AI
         {
             if (deepness == 0)
             {
+                ends++;
                 return Tuple.Create(PointEvaluator.Calculate(ScoreBoard, MeBoard, 0) - PointEvaluator.Calculate(ScoreBoard, EnemyBoard, 0), Me, MeBoard, EnemyBoard, first);
             }
 

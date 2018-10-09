@@ -11,8 +11,10 @@ namespace AngryBee
 
             var ai = new AI.AI();
             var ai_kousi = new AI.AI_kousi();
-            var ai_SingleFor = new AI.AI_SingleFor();
-            var ai_OutSide = new AI.AI_outside(); 
+            var ai_singlefor = new AI.AI_SingleFor();
+            var ai_outside = new AI.AI_outside();
+            var ai_hanpuku = new AI.AI_hanpuku();
+            var ai_hanpuku_a = new AI.AI_hanpuku_a();
             var game = Boards.BoardSetting.Generate(height, width);
 
             var meBoard = new Boards.ColoredBoardSmallBigger(height, width);
@@ -45,8 +47,14 @@ namespace AngryBee
                 var meBoard_spare = meBoard;
                 var enBoard_spare = enemyBoard;
 
-                var res_me = ai_kousi.Begin(2, game.setting, meBoard, enemyBoard, game.me, game.enemy);
-                var res_en = ai.Begin(2, game.setting, enBoard_spare, meBoard_spare, game.enemy, game.me);
+                int ends_1 = 0, ends_2 = 0;
+                var res_me = ai_hanpuku.Begin(1000, game.setting, meBoard, enemyBoard, game.me, game.enemy);
+                ends_1 = ai_hanpuku.ends;
+                ai_hanpuku.ends = 0;
+                var res_en = ai_hanpuku.Begin(1000, game.setting, enBoard_spare, meBoard_spare, game.enemy, game.me);
+                ends_2 = ai_hanpuku.ends;
+                ai_hanpuku.ends = 0;
+
                 game.me = res_me;
                 game.enemy = res_en;
 
@@ -150,7 +158,8 @@ namespace AngryBee
                 PointEvaluator.Normal PointEvaluator = new PointEvaluator.Normal();
                 Console.WriteLine("AI1_Points:{0}", PointEvaluator.Calculate(game.setting.ScoreBoard, meBoard, 0));
                 Console.WriteLine("AI2_Points:{0}", PointEvaluator.Calculate(game.setting.ScoreBoard, enemyBoard, 0));
-                //Console.WriteLine("End Nodes:{0}[nodes]", ai.ends);
+                Console.WriteLine("End Nodes:{0}[nodes]", ends_1);
+                Console.WriteLine("End Nodes:{0}[nodes]", ends_2);
                 Console.WriteLine("Time Elasped:{0}[ms]", sw.ElapsedMilliseconds);
             }
         }
