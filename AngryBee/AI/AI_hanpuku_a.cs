@@ -1,8 +1,9 @@
 ﻿using AngryBee.Boards;
+using MCTProcon29Protocol;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+#if FALSE
 namespace AngryBee.AI
 {
     public class AI_hanpuku_a
@@ -237,3 +238,4 @@ namespace AngryBee.AI
 
     }
 }
+#endif

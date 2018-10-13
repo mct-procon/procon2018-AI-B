@@ -21,4 +21,10 @@
     <PackageReference Include="System.Runtime.Intrinsics.Experimental" Version="4.5.0-rc1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="MCTProcon29Protocol">
+      <HintPath>..\libs\MCTProcon29Protocol.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

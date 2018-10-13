@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MCTProcon29Protocol;
 using System.Text;
 
 namespace AngryBee.Boards
@@ -50,24 +51,6 @@ namespace AngryBee.Boards
                 new Player(new Point((ushort)agent1_x, agent1_y), new Point((ushort)agent2_x, agent2_y)),
                 new Player(new Point((ushort)(width - agent1_x - 1), agent1_y), new Point((ushort)(width - agent2_x - 1), agent2_y))
                 );
-        }
-
-        [Obsolete("It is slower.")]
-        public ColoredBoard GetNewColoredBoard()
-        {
-            int count = Width * Height;
-            if (count < 64)
-                return new ColoredBoardSmall((ushort)Width, (ushort)Height);
-            else if (Width < 16 && Height < 16)
-                return new ColoredBoardSmallBigger((ushort)Width, (ushort)Height);
-            else if (Width < 32 && Height < 32)
-                return new ColoredBoardNormalSmaller((ushort)Width, (ushort)Height);
-            else if (Width < 64 && Height < 64)
-                return new ColoredBoardNormal((ushort)Width, (ushort)Height);
-            //else
-            //    return new ColoredBoardBig((ushort)Width, (ushort)Height);
-
-            throw new NotSupportedException();
         }
     }
 }

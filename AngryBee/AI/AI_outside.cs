@@ -1,27 +1,27 @@
 ﻿using AngryBee.Boards;
+using MCTProcon29Protocol;
+using MCTProcon29Protocol.Methods;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace AngryBee.AI
 {
-    class AI_outside
+    class AI_outside : MCTProcon29Protocol.AIFramework.AIBase
     {
         Rule.MovableChecker Checker = new Rule.MovableChecker();
         PointEvaluator.Normal PointEvaluator = new PointEvaluator.Normal();
 
         (int, int) nextWay1 = (-1, -1), nextWay2 = (1, 1);
 
-        //深さとかいらないけど、名前変更だけで済むので、引数に入れる
-        public Player Begin(int deepness, BoardSetting setting, ColoredBoardSmallBigger MeBoard, ColoredBoardSmallBigger EnemyBoard, Player Me, in Player Enemy)
-        {
-            
-            Me = Search(setting, MeBoard, EnemyBoard, Me, Enemy);
 
-            return Me;
+        protected override void Solve()
+        {
+            var res = Search(MyBoard, EnemyBoard, new Player(MyAgent1, MyAgent2), new Player(EnemyAgent1, EnemyAgent2));
+            SolverResult = new Decided(new VelocityPoint((int)res.Agent1.X - (int)MyAgent1.X, (int)res.Agent1.Y - (int)MyAgent1.Y), new VelocityPoint((int)res.Agent2.X - (int)MyAgent2.X, (int)res.Agent2.Y - (int)MyAgent2.Y));
         }
 
-        Player Search(BoardSetting setting, ColoredBoardSmallBigger MeBoard, ColoredBoardSmallBigger EnemyBoard, Player Me, Player Enemy)
+        Player Search(ColoredBoardSmallBigger MeBoard, ColoredBoardSmallBigger EnemyBoard, Player Me, Player Enemy)
         {
             
             var beforeMe = Me;
@@ -132,8 +132,11 @@ namespace AngryBee.AI
                 }
             }
 
-
             return Me;
+        }
+
+        protected override void EndGame(GameEnd end)
+        {
         }
     }
 }

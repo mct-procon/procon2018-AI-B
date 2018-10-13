@@ -1,17 +1,18 @@
 ﻿using AngryBee.Boards;
+using MCTProcon29Protocol;
+using MCTProcon29Protocol.Methods;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+#if FALSE
 namespace AngryBee.AI
 {
-    public class AI_hanpuku
+    public class AI_hanpuku : MCTProcon29Protocol.AIFramework.AIBase
     {
         Rule.MovableChecker Checker = new Rule.MovableChecker();
         PointEvaluator.Normal PointEvaluator = new PointEvaluator.Normal();
 
         public int ends = 0;
-        private System.Diagnostics.Stopwatch SearchTime;
 
         private class DP
         {
@@ -22,47 +23,44 @@ namespace AngryBee.AI
         private DP[] dp = new DP[100];
         int cnt;
 
-        public Player Begin(int time, BoardSetting setting, ColoredBoardSmallBigger MeBoard, ColoredBoardSmallBigger EnemyBoard, Player Me, in Player Enemy)
+        protected override void Solve()
         {
             (int DestX, int DestY)[] WayEnumerator = { (1, 1), (1, -1), (-1, 1), (-1, -1), (0, 1), (-1, 0), (1, 0), (0, -1) };
 
             DP syoki = new DP();
-            for(int i = 1; i < 100; ++i)
+            for (int i = 1; i < 100; ++i)
             {
                 dp[i] = syoki;
             }
             cnt = 1;
-
-            return Search(time, WayEnumerator, MeBoard, EnemyBoard, Me, Enemy, setting.ScoreBoard);
+            SolverResult = Search(WayEnumerator, MyBoard, EnemyBoard, new Player(MyAgent1, MyAgent2), new Player(EnemyAgent1, EnemyAgent2), ScoreBoard);
         }
 
-        
-        Player Search(int time, in (int DestX, int DestY)[] WayEnumerator, in ColoredBoardSmallBigger MeBoard, in ColoredBoardSmallBigger EnemyBoard, in Player Me, in Player Enemy, in sbyte[,] ScoreBoard)
+
+        Decided Search(in (int DestX, int DestY)[] WayEnumerator, in ColoredBoardSmallBigger MeBoard, in ColoredBoardSmallBigger EnemyBoard, in Player Me, in Player Enemy, in sbyte[,] ScoreBoard)
         {
-            Player BestWay = Me;
-            SearchTime = System.Diagnostics.Stopwatch.StartNew();
-            while (time >= SearchTime.ElapsedMilliseconds)
+            VelocityPoint ag1 = new VelocityPoint(), ag2 = new VelocityPoint();
+            while (!CancellationToken.IsCancellationRequested)
             {
-                Max(cnt, WayEnumerator, MeBoard, EnemyBoard, Me, Enemy, int.MinValue, int.MaxValue, ScoreBoard, time);
-                BestWay.Agent1 = Me.Agent1 + dp[cnt].Ag1Way;
-                BestWay.Agent2 = Me.Agent2 + dp[cnt].Ag2Way;
+                Max(cnt, WayEnumerator, MeBoard, EnemyBoard, Me, Enemy, int.MinValue, int.MaxValue, ScoreBoard);
+                ag1 = dp[cnt].Ag1Way;
+                ag2 = dp[cnt].Ag2Way;
                 cnt++;
             }
-            SearchTime.Stop();
 
-            return BestWay;
+            return new Decided(ag1, ag2);
         }
 
 
 
-        public Tuple<int, ColoredBoardSmallBigger, ColoredBoardSmallBigger, Player, Player> Max(int deepness, in (int DestX, int DestY)[] WayEnumerator, in ColoredBoardSmallBigger MeBoard, in ColoredBoardSmallBigger EnemyBoard, in Player Me, in Player Enemy, int alpha, int beta, in sbyte[,] ScoreBoard, int time)
+        public Tuple<int, ColoredBoardSmallBigger, ColoredBoardSmallBigger, Player, Player> Max(int deepness, in (int DestX, int DestY)[] WayEnumerator, in ColoredBoardSmallBigger MeBoard, in ColoredBoardSmallBigger EnemyBoard, in Player Me, in Player Enemy, int alpha, int beta, in sbyte[,] ScoreBoard)
         {
             if (deepness == 0)
             {
                 ends++;
                 return Tuple.Create(PointEvaluator.Calculate(ScoreBoard, MeBoard, 0) - PointEvaluator.Calculate(ScoreBoard, EnemyBoard, 0), MeBoard, EnemyBoard, Me, Enemy);
             }
-            if(SearchTime.ElapsedMilliseconds >= time)
+            if(CancellationToken.IsCancellationRequested)
             {
                 return Tuple.Create(PointEvaluator.Calculate(ScoreBoard, MeBoard, 0) - PointEvaluator.Calculate(ScoreBoard, EnemyBoard, 0), MeBoard, EnemyBoard, Me, Enemy);
             }
@@ -98,14 +96,14 @@ namespace AngryBee.AI
                         else
                             newMeBoard[newMe.Agent2] = true;
 
-                        result = Mini(deepness, WayEnumerator, newMeBoard, newEnBoard, newMe, Enemy, result.Item1, beta, ScoreBoard, time);
+                        result = Mini(deepness, WayEnumerator, newMeBoard, newEnBoard, newMe, Enemy, result.Item1, beta, ScoreBoard);
                     }
                     else
                     {
                         newMeBoard[newMe.Agent1] = true;
                         newMeBoard[newMe.Agent2] = true;
 
-                        result = Mini(deepness, WayEnumerator, newMeBoard, EnemyBoard, newMe, Enemy, result.Item1, beta, ScoreBoard, time);
+                        result = Mini(deepness, WayEnumerator, newMeBoard, EnemyBoard, newMe, Enemy, result.Item1, beta, ScoreBoard);
                     }
                 }
                 
@@ -145,14 +143,14 @@ namespace AngryBee.AI
                         else
                             newMeBoard[newMe.Agent2] = true;
 
-                        cache = Mini(deepness, WayEnumerator, newMeBoard, newEnBoard, newMe, Enemy, result.Item1, beta, ScoreBoard, time);
+                        cache = Mini(deepness, WayEnumerator, newMeBoard, newEnBoard, newMe, Enemy, result.Item1, beta, ScoreBoard);
                     }
                     else
                     {
                         newMeBoard[newMe.Agent1] = true;
                         newMeBoard[newMe.Agent2] = true;
 
-                        cache = Mini(deepness, WayEnumerator, newMeBoard, EnemyBoard, newMe, Enemy, result.Item1, beta, ScoreBoard, time);
+                        cache = Mini(deepness, WayEnumerator, newMeBoard, EnemyBoard, newMe, Enemy, result.Item1, beta, ScoreBoard);
                     }
 
                     if (result.Item1 < cache.Item1)
@@ -178,7 +176,7 @@ namespace AngryBee.AI
         public Tuple<int, ColoredBoardSmallBigger, ColoredBoardSmallBigger, Player, Player> Mini(int deepness, in (int DestX, int DestY)[] WayEnumerator, in ColoredBoardSmallBigger MeBoard, in ColoredBoardSmallBigger EnemyBoard, in Player Me, in Player Enemy, int alpha, int beta, in sbyte[,] ScoreBoard, int time)
         {
             deepness--;
-            if (SearchTime.ElapsedMilliseconds >= time)
+            if (CancellationToken.IsCancellationRequested)
             {
                 return Tuple.Create(PointEvaluator.Calculate(ScoreBoard, MeBoard, 0) - PointEvaluator.Calculate(ScoreBoard, EnemyBoard, 0), MeBoard, EnemyBoard, Me, Enemy);
             }
@@ -221,13 +219,13 @@ namespace AngryBee.AI
                         else
                             newEnBoard[newEnemy.Agent2] = true;
 
-                        cache = Max(deepness, WayEnumerator, newMeBoard, newEnBoard, Me, newEnemy, alpha, result.Item1, ScoreBoard, time);
+                        cache = Max(deepness, WayEnumerator, newMeBoard, newEnBoard, Me, newEnemy, alpha, result.Item1, ScoreBoard);
                     }
                     else
                     {
                         newEnBoard[newEnemy.Agent1] = true;
-                        newEnBoard[newEnemy.Agent2] = true;
-                        cache = Max(deepness, WayEnumerator, MeBoard, newEnBoard, Me, newEnemy, alpha, result.Item1, ScoreBoard, time);
+                        newEnBoard[newEnemy.Agent2] = true; 
+                        cache = Max(deepness, WayEnumerator, MeBoard, newEnBoard, Me, newEnemy, alpha, result.Item1, ScoreBoard);
                     }
 
                     if (result.Item1 > cache.Item1)
@@ -245,6 +243,9 @@ namespace AngryBee.AI
             return result;
         }
 
-
+        protected override void EndGame(GameEnd end)
+        {
+        }
     }
 }
+#endif

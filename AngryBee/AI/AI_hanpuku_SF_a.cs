@@ -1,11 +1,13 @@
 ﻿using AngryBee.Boards;
+using MCTProcon29Protocol;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
+#if FALSE
 namespace AngryBee.AI
 {
-    public class AI_hanpuku_SF_a
+    public class AI_hanpuku_SF_a : MCTProcon29Protocol.AIFramework.AIBase
     {
         Rule.MovableChecker Checker = new Rule.MovableChecker();
         PointEvaluator.Normal PointEvaluator = new PointEvaluator.Normal();
@@ -21,6 +23,10 @@ namespace AngryBee.AI
         private DP[] dp1 = new DP[100];
         private DP[] dp2 = new DP[100];
         int cnt;
+
+        protected override void Solve()
+        {
+        }
 
         public Player Begin(int deepness, BoardSetting setting, ColoredBoardSmallBigger MeBoard, ColoredBoardSmallBigger EnemyBoard, Player Me, in Player Enemy)
         {
@@ -262,3 +268,5 @@ namespace AngryBee.AI
         }
     }
 }
+
+#endif
