@@ -66,7 +66,7 @@ namespace AngryBee.AI
             int result = int.MinValue;
 
             Player Killer = new Player(new Point(114, 114), new Point(114, 114));
-            var nextMe = MoveOrderling(2, ScoreBoard, MyBoard, EnemyBoard, new Player(MyAgent1, MyAgent2), new Player(EnemyAgent1, EnemyAgent2), 0);
+            var nextMe = MoveOrderling(IsCrossPainted(MyAgent1, MyBoard) ? 1 : 2, IsCrossPainted(MyAgent2, MyBoard) ? 1 : 2, ScoreBoard, MyBoard, EnemyBoard, new Player(MyAgent1, MyAgent2), new Player(EnemyAgent1, EnemyAgent2), 0);
 
             Decided returnValue = null;
 
@@ -140,21 +140,7 @@ namespace AngryBee.AI
 
             Player Killer = new Player(new Point(114, 114), new Point(114, 114));
 
-            int Search_adder = 1;
-            for(int i = 0; i < WayEnumerator.Length; i += 2)
-            {
-                if((Me.Agent1 + WayEnumerator[i]).X < MeBoard.Width && (Me.Agent1 + WayEnumerator[i]).Y < MeBoard.Height && !MeBoard[Me.Agent1 + WayEnumerator[i]])
-                {
-                    Search_adder = 2;
-                    break;
-                }   
-                if((Me.Agent2 + WayEnumerator[i]).X < MeBoard.Width && (Me.Agent2 + WayEnumerator[i]).Y < MeBoard.Height && !MeBoard[Me.Agent2 + WayEnumerator[i]])
-                {
-                    Search_adder = 2;
-                    break;
-                }
-            }
-            var nextMe = MoveOrderling(Search_adder, ScoreBoard, MeBoard, EnemyBoard, Me, Enemy, count);
+            var nextMe = MoveOrderling(IsCrossPainted(Me.Agent1, MeBoard) ? 1 : 2, IsCrossPainted(Me.Agent2, MeBoard) ? 1 : 2, ScoreBoard, MeBoard, EnemyBoard, Me, Enemy, count);
 
             for (int i = 0; i < nextMe.Count; i++)
             {
@@ -227,7 +213,7 @@ namespace AngryBee.AI
             int result = int.MaxValue;
 
             Player Killer = new Player(new Point(114, 114), new Point(114, 114));
-            var nextEnemy = MoveOrderling(1, ScoreBoard, EnemyBoard, MeBoard, Enemy, Me, count);
+            var nextEnemy = MoveOrderling(1, 1, ScoreBoard, EnemyBoard, MeBoard, Enemy, Me, count);
 
             for (int i = 0; i < nextEnemy.Count; i++)
             {
@@ -287,6 +273,21 @@ namespace AngryBee.AI
             return result;
         }
 
+        private bool IsCrossPainted(Point Agent, in ColoredBoardSmallBigger MeBoard)
+        {
+            bool result = true;
+            bool left_unmovable = Agent.X - 1 >= MeBoard.Width;
+            bool right_unmovable = Agent.X + 1 >= MeBoard.Width;
+            bool top_unmovable = Agent.Y - 1 >= MeBoard.Height;
+            bool bottom_unmovable = Agent.Y + 1 >= MeBoard.Height;
+            result &= left_unmovable || top_unmovable || MeBoard[Agent.X - 1, Agent.Y - 1];
+            result &= right_unmovable || top_unmovable || MeBoard[Agent.X + 1, Agent.Y - 1];
+            result &= right_unmovable || bottom_unmovable || MeBoard[Agent.X + 1, Agent.Y + 1];
+            result &= left_unmovable || bottom_unmovable || MeBoard[Agent.X - 1, Agent.Y + 1];
+            //if (result) System.Diagnostics.Debugger.Break();
+            return result;
+        }
+
         //遷移順を決める.  「この関数においては」MeBoard…手番プレイヤのボード, Me…手番プレイヤ、とします。
         //(この関数におけるMeは、Maxi関数におけるMe, Mini関数におけるEnemyです）
         //newMe[0]が最初に探索したい行き先、nextMe[1]が次に探索したい行き先…として、nextMeに「次の行き先」を入れていきます。
@@ -294,7 +295,7 @@ namespace AngryBee.AI
         //ルール1. Killer手があれば、それを優先する。(Killer手がなければ、Killer.Agent1 = (514, 514), Killer.Agent2 = (514, 514)のように範囲外の移動先を設定すること。)
         //ルール2. 次のmoveで得られる「タイルポイント」の合計値、が大きい移動(の組み合わせ)を優先する。
         //なお、ルールはMovableChecker.csに準ずるため、現在は、「タイル除去先にもう一方のエージェントが移動することはできない」として計算しています。
-        private List<KeyValuePair<int, (VelocityPoint Agent1, VelocityPoint Agent2)>> MoveOrderling(int adder, sbyte[,] ScoreBoard, in ColoredBoardSmallBigger MeBoard, in ColoredBoardSmallBigger EnemyBoard, in Player Me, in Player Enemy, int deep)
+        private List<KeyValuePair<int, (VelocityPoint Agent1, VelocityPoint Agent2)>> MoveOrderling(int adder_a1, int adder_a2, sbyte[,] ScoreBoard, in ColoredBoardSmallBigger MeBoard, in ColoredBoardSmallBigger EnemyBoard, in Player Me, in Player Enemy, int deep)
         {
             uint width = MeBoard.Width;
             uint height = MeBoard.Height;
@@ -302,9 +303,9 @@ namespace AngryBee.AI
 
             var Killer = dp[deep].Score == int.MinValue ? new Player(new Point(114, 514), new Point(114, 514)) : new Player(Me.Agent1 + dp[deep].Agent1Way, Me.Agent2 + dp[deep].Agent2Way);
 
-            for (int i = 0; i < WayEnumerator.Length; i += adder)
+            for (int i = 0; i < WayEnumerator.Length; i += adder_a1)
             {
-                for (int m = 0; m < WayEnumerator.Length; m += adder)
+                for (int m = 0; m < WayEnumerator.Length; m += adder_a2)
                 {
                     Player newMe = Me;
                     newMe.Agent1 += WayEnumerator[i];

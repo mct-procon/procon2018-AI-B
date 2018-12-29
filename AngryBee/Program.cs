@@ -13,7 +13,7 @@ namespace AngryBee
             Console.WriteLine("ポート番号を入力（先手15000, 後手15001)＞");
             portId = int.Parse(Console.ReadLine());
 
-            MCTProcon29Protocol.AIFramework.AIBase ai = new AI.AI_hanpuku_SF();
+            MCTProcon29Protocol.AIFramework.AIBase ai = new AI.AI_koushi_dx();
 
             Console.CancelKeyPress +=
                 (o, e) =>
